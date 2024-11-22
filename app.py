@@ -19,8 +19,10 @@ class CustomLSTM(LSTM):
 
 
 # File paths (Change this to your actual paths)
-MODEL_PATH = "Attention.h5"
-# MODEL_PATH = "WithoutAttentionModel.h5"
+# MODEL_PATH = "Attention.h5"
+MODEL_PATH = "WithoutAttentionModel.h5"
+# MODEL_PATH = "BERT.h5"
+# MODEL_PATH = "MHA.h5"
 CAPTIONS_PATH = "hindi_captions.txt"
 TOKENIZER_PATH = "tokenizer.pkl"
 
