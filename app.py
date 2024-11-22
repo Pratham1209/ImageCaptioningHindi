@@ -6,7 +6,6 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.applications import InceptionV3
 from tensorflow.keras.applications.inception_v3 import preprocess_input
 from tensorflow.keras.preprocessing.image import img_to_array
-import pickle
 from PIL import Image
 from tensorflow.keras.layers import LSTM
 
@@ -14,23 +13,21 @@ from tensorflow.keras.layers import LSTM
 class CustomLSTM(LSTM):
     def __init__(self, *args, **kwargs):
         # Safely remove "time_major" argument, if exists
-        kwargs.pop("time_major", None)  
+        kwargs.pop("time_major", None)
         super().__init__(*args, **kwargs)
 
 
-# File paths (Change this to your actual paths)
-# MODEL_PATH = "Attention.h5"
-MODEL_PATH = "WithoutAttentionModel.h5"
-# MODEL_PATH = "BERT.h5"
-# MODEL_PATH = "MHA.h5"
+# File paths
+MODEL_PATHS = {
+    "Without Attention": "WithoutAttentionModel.h5",
+    "With Attention": "Attention.h5",
+    "MHA": "MHA.h5",
+    "BERT": "BERT.h5",
+    "Transformers": "Transformers.h5",
+}
 CAPTIONS_PATH = "hindi_captions.txt"
-TOKENIZER_PATH = "tokenizer.pkl"
 
-# Load the trained model
-capmodel = load_model(MODEL_PATH, custom_objects={"LSTM": CustomLSTM})
-
-
-# Load captions and tokenizer from local files
+# Load captions and initialize tokenizer
 def load_captions(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         captions = file.readlines()
@@ -45,19 +42,14 @@ def load_captions(file_path):
         captions_dict[image].append(caption)
     return captions_dict
 
-# def load_tokenizer(tokenizer_path):
-#     with open(tokenizer_path, 'rb') as file:
-#         tokenizer = pickle.load(file)
-#     return tokenizer
+def initialize_tokenizer(captions_dict):
+    all_captions = [cap for caps in captions_dict.values() for cap in caps]
+    tokenizer = Tokenizer()
+    tokenizer.fit_on_texts(all_captions)
+    return tokenizer
 
-# Initialize captions and tokenizer
 captions_dict = load_captions(CAPTIONS_PATH)
-all_captions = [cap for caps in captions_dict.values() for cap in caps]
-tokenizer = Tokenizer()
-tokenizer.fit_on_texts(all_captions)
-
-
-# tokenizer = load_tokenizer(TOKENIZER_PATH)
+tokenizer = initialize_tokenizer(captions_dict)
 
 # Extract features from an image using InceptionV3
 def extract_features(img):
@@ -97,20 +89,34 @@ def generate_caption(model, tokenizer, features, max_length=47):
 
 # Streamlit UI
 st.title("Image Caption Generator in Hindi")
-st.write("Upload an image to generate a caption in Hindi.")
+st.write("Upload an image to generate a caption in Hindi and choose the prediction model.")
+
+# Dropdown for model selection
+selected_model = st.selectbox(
+    "Select a model for caption generation:",
+    options=list(MODEL_PATHS.keys())
+)
 
 # Upload image
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
 
-if uploaded_file is not None:
-    # Display the image
-    img = Image.open(uploaded_file)
-    st.image(img, caption="Uploaded Image", use_column_width=True)
-    
-    # Extract features and generate caption
-    test_features = extract_features(img)
-    caption = generate_caption(capmodel, tokenizer, test_features)
-    
-    # Display the generated caption
-    st.write("Generated Caption: ")
-    st.markdown(f"**{caption}**")
+if uploaded_file is not None and selected_model:
+    try:
+        # Display the image
+        img = Image.open(uploaded_file)
+        st.image(img, caption="Uploaded Image", use_column_width=True)
+        
+        # Load the selected model
+        model_path = MODEL_PATHS[selected_model]
+        st.write(f"Loading model: {selected_model}")
+        capmodel = load_model(model_path, custom_objects={"LSTM": CustomLSTM})
+        
+        # Extract features and generate caption
+        test_features = extract_features(img)
+        caption = generate_caption(capmodel, tokenizer, test_features)
+        
+        # Display the generated caption
+        st.write("Generated Caption: ")
+        st.markdown(f"**{caption}**")
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
