@@ -8,6 +8,13 @@ from tensorflow.keras.applications.inception_v3 import preprocess_input
 from tensorflow.keras.preprocessing.image import img_to_array
 import pickle
 from PIL import Image
+from tensorflow.keras.layers import LSTM
+
+# Define a custom LSTM to ignore unsupported arguments
+class CustomLSTM(LSTM):
+    def _init_(self, *args, **kwargs):
+        kwargs.pop("time_major", None)  # Ignore the time_major argument
+        super()._init_(*args, **kwargs)
 
 # File paths (Change this to your actual paths)
 # MODEL_PATH = "/workspaces/ImageCaptioningHindi/Attention.h5"
@@ -16,7 +23,7 @@ CAPTIONS_PATH = "/workspaces/ImageCaptioningHindi/hindi_captions.txt"
 TOKENIZER_PATH = "/workspaces/ImageCaptioningHindi/tokenizer.pkl"
 
 # Load the trained model
-capmodel = load_model(MODEL_PATH)
+capmodel = load_model(MODEL_PATH,custom_objects={"LSTM": CustomLSTM})
 
 # Load captions and tokenizer from local files
 def load_captions(file_path):
