@@ -65,9 +65,9 @@ The system architecture includes the following steps:
 3. **Caption Generation**: The features are passed through the selected deep learning model to generate captions.  
 4. **Caption Display**: The generated caption in Hindi is shown to the user, alongside the uploaded image.
 
-```
+---
 
-```
+---
 ##**Models Implemented**
 1. **Without Attention**: Traditional image captioning model without attention mechanisms.
 2. **With Attention**: Uses attention mechanisms to focus on specific parts of an image while generating captions.
@@ -75,24 +75,24 @@ The system architecture includes the following steps:
 4. **BERT-based Captioning**: Utilizes BERT for contextual understanding and generates captions in Hindi.
 5. **Transformer-based Captioning**: Uses Transformer architecture to generate more accurate captions.
 
-```
-```
+---
+---
 ##**Usage**
 
 Upload an image in jpg, jpeg, or png format.
 Select the model for caption generation from the dropdown menu.
 The app will process the image and display the generated Hindi caption.
-```
+---
 
-```
+---
 ##**Future Scope**
 **Expand Language Support**: Implement multi-language support for captions.
 **Improve Model Accuracy**: Fine-tune models for better accuracy and diverse captioning.
 **Real-time Image Captioning**: Enable real-time captioning for live streams or video feeds.
 
-```
+---
 
-```
+---
 ##**Contributing**
 We welcome contributions! To contribute to this project:
 
@@ -102,4 +102,4 @@ Fork the repository.
 - Commit your changes (git commit -am 'Add new feature').
 - Push to the branch (git push origin feature-branch).
 - Create a new pull request.
-```
+---
