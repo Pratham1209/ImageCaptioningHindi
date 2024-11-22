@@ -12,9 +12,11 @@ from tensorflow.keras.layers import LSTM
 
 # Define a custom LSTM to ignore unsupported arguments
 class CustomLSTM(LSTM):
-    def _init_(self, *args, **kwargs):
-        kwargs.pop("time_major", None)  # Ignore the time_major argument
-        super()._init_(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        # Safely remove "time_major" argument, if exists
+        kwargs.pop("time_major", None)  
+        super().__init__(*args, **kwargs)
+
 
 # File paths (Change this to your actual paths)
 MODEL_PATH = "Attention.h5"
@@ -23,7 +25,8 @@ CAPTIONS_PATH = "/workspaces/ImageCaptioningHindi/hindi_captions.txt"
 TOKENIZER_PATH = "/workspaces/ImageCaptioningHindi/tokenizer.pkl"
 
 # Load the trained model
-capmodel = load_model(MODEL_PATH,custom_objects={"LSTM": CustomLSTM})
+capmodel = load_model(MODEL_PATH, custom_objects={"LSTM": CustomLSTM})
+
 
 # Load captions and tokenizer from local files
 def load_captions(file_path):
