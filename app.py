@@ -1,31 +1,30 @@
-from tensorflow.keras.models import load_model
+import streamlit as st
 import numpy as np
+from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.applications import InceptionV3
 from tensorflow.keras.applications.inception_v3 import preprocess_input
-from tensorflow.keras.preprocessing.image import load_img, img_to_array
+from tensorflow.keras.preprocessing.image import img_to_array
+import pickle
+from PIL import Image
 
-# Load model without the optimizer
-capmodel = load_model("best_model.h5", compile=False)
+# File paths (Change this to your actual paths)
+# MODEL_PATH = "/workspaces/ImageCaptioningHindi/Attention.h5"
+MODEL_PATH = "/workspaces/ImageCaptioningHindi/WithoutAttention.h5"
+CAPTIONS_PATH = "/workspaces/ImageCaptioningHindi/hindi_captions.txt"
+TOKENIZER_PATH = "/workspaces/ImageCaptioningHindi/tokenizer.pkl"
 
-# Compile the model again with a valid optimizer
-from tensorflow.keras.optimizers import Adam
-capmodel.compile(optimizer=Adam(), loss="categorical_crossentropy")
+# Load the trained model
+capmodel = load_model(MODEL_PATH)
 
-# Paths to dataset
-# dataset_path = "Flickr8k_Dataset"
-captions_path = "hindi_captions.txt"
-
-# Load captions
-# Load captions and normalize keys
+# Load captions and tokenizer from local files
 def load_captions(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         captions = file.readlines()
     captions_dict = {}
     for line in captions:
         image, caption = line.split('\t')
-        # Normalize image key by removing suffixes like #4
         image = image.split('#')[0].strip()
         caption = caption.strip()
         caption = f"<start> {caption} <end>"
@@ -34,54 +33,67 @@ def load_captions(file_path):
         captions_dict[image].append(caption)
     return captions_dict
 
-captions_dict = load_captions(captions_path)
+def load_tokenizer(tokenizer_path):
+    with open(tokenizer_path, 'rb') as file:
+        tokenizer = pickle.load(file)
+    return tokenizer
 
+# Initialize captions and tokenizer
+captions_dict = load_captions(CAPTIONS_PATH)
+tokenizer = load_tokenizer(TOKENIZER_PATH)
 
-all_captions = [cap for caps in captions_dict.values() for cap in caps]
-tokenizer = Tokenizer()
-tokenizer.fit_on_texts(all_captions)
-
-def extract_features(img_path):
+# Extract features from an image using InceptionV3
+def extract_features(img):
     model = InceptionV3(weights="imagenet", include_top=False, pooling="avg")
-    # features = {}
-    img = load_img(img_path, target_size=(299, 299))
+    img = img.resize((299, 299))  # Resize to match InceptionV3 input size
     img = img_to_array(img)
     img = np.expand_dims(img, axis=0)
     img = preprocess_input(img)
     return model.predict(img)
 
-
-from PIL import Image
-import matplotlib.pyplot as plt
-
-def preview_image(image_path):
-    img = Image.open(image_path)
-    plt.imshow(img)
-    plt.axis("off")
-    plt.title("Input Image")
-    plt.show()
-
-max_length = 50
-
-def generate_caption(model, tokenizer, features, max_length):
+# Generate caption
+def generate_caption(model, tokenizer, features, max_length=47):
     caption = "<start>"
+    consecutive_end_count = 0  # Track consecutive "end" tokens
+    result_caption = []
+
     for _ in range(max_length):
         sequence = tokenizer.texts_to_sequences([caption])[0]
         sequence = pad_sequences([sequence], maxlen=max_length)
         prediction = model.predict([features, sequence], verbose=0)
         predicted_index = np.argmax(prediction)
-
-        # Handle missing keys
         predicted_word = tokenizer.index_word.get(predicted_index, "<unknown>")
 
         if predicted_word == "end":
-            break
-        caption += " " + predicted_word
-    return caption
+            consecutive_end_count += 1
+            if consecutive_end_count >= 1:  # Stop if "end" appears consecutively
+                break
+        else:
+            consecutive_end_count = 0  # Reset if a valid word is generated
 
-# Test on an image
-test_image = "blind.jpg"
-preview_image(test_image)
-test_features = extract_features(test_image)
-caption = generate_caption(capmodel, tokenizer, test_features, max_length)
-print("Generated Caption:", caption)
+        result_caption.append(predicted_word)
+        caption += " " + predicted_word
+
+    # Remove any <start> or <end> tokens from the final caption
+    return " ".join(word for word in result_caption if word not in ["<start>", "<end>"])
+
+
+# Streamlit UI
+st.title("Image Caption Generator in Hindi")
+st.write("Upload an image to generate a caption in Hindi.")
+
+# Upload image
+uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
+
+if uploaded_file is not None:
+    # Display the image
+    img = Image.open(uploaded_file)
+    st.image(img, caption="Uploaded Image", use_column_width=True)
+    
+    # Extract features and generate caption
+    test_features = extract_features(img)
+    caption = generate_caption(capmodel, tokenizer, test_features)
+    
+    # Display the generated caption
+    st.write("Generated Caption: ")
+    st.markdown(f"**{caption}**")
