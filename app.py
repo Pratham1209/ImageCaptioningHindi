@@ -43,14 +43,19 @@ def load_captions(file_path):
         captions_dict[image].append(caption)
     return captions_dict
 
-def load_tokenizer(tokenizer_path):
-    with open(tokenizer_path, 'rb') as file:
-        tokenizer = pickle.load(file)
-    return tokenizer
+# def load_tokenizer(tokenizer_path):
+#     with open(tokenizer_path, 'rb') as file:
+#         tokenizer = pickle.load(file)
+#     return tokenizer
 
 # Initialize captions and tokenizer
 captions_dict = load_captions(CAPTIONS_PATH)
-tokenizer = load_tokenizer(TOKENIZER_PATH)
+all_captions = [cap for caps in captions_dict.values() for cap in caps]
+tokenizer = Tokenizer()
+tokenizer.fit_on_texts(all_captions)
+
+
+# tokenizer = load_tokenizer(TOKENIZER_PATH)
 
 # Extract features from an image using InceptionV3
 def extract_features(img):
