@@ -20,9 +20,9 @@ class CustomLSTM(LSTM):
 
 # File paths (Change this to your actual paths)
 MODEL_PATH = "Attention.h5"
-# MODEL_PATH = "/workspaces/ImageCaptioningHindi/WithoutAttentionModel.h5"
-CAPTIONS_PATH = "/workspaces/ImageCaptioningHindi/hindi_captions.txt"
-TOKENIZER_PATH = "/workspaces/ImageCaptioningHindi/tokenizer.pkl"
+# MODEL_PATH = "WithoutAttentionModel.h5"
+CAPTIONS_PATH = "hindi_captions.txt"
+TOKENIZER_PATH = "tokenizer.pkl"
 
 # Load the trained model
 capmodel = load_model(MODEL_PATH, custom_objects={"LSTM": CustomLSTM})
