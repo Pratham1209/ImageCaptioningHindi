@@ -67,8 +67,7 @@ The system architecture includes the following steps:
 
 ---
 
----
-##**Models Implemented**
+## **Models Implemented**
 1. **Without Attention**: Traditional image captioning model without attention mechanisms.
 2. **With Attention**: Uses attention mechanisms to focus on specific parts of an image while generating captions.
 3. **Multi-Head Attention (MHA)**: A more advanced version of attention, helping the model to learn multiple aspects of the image.
@@ -76,24 +75,21 @@ The system architecture includes the following steps:
 5. **Transformer-based Captioning**: Uses Transformer architecture to generate more accurate captions.
 
 ---
----
-##**Usage**
+## **Usage**
 
 Upload an image in jpg, jpeg, or png format.
 Select the model for caption generation from the dropdown menu.
 The app will process the image and display the generated Hindi caption.
----
 
 ---
-##**Future Scope**
+## **Future Scope**
 **Expand Language Support**: Implement multi-language support for captions.
 **Improve Model Accuracy**: Fine-tune models for better accuracy and diverse captioning.
 **Real-time Image Captioning**: Enable real-time captioning for live streams or video feeds.
 
 ---
 
----
-##**Contributing**
+## **Contributing**
 We welcome contributions! To contribute to this project:
 
 Fork the repository.
