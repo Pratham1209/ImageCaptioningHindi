@@ -17,7 +17,7 @@ class CustomLSTM(LSTM):
         super()._init_(*args, **kwargs)
 
 # File paths (Change this to your actual paths)
-MODEL_PATH = "/workspaces/ImageCaptioningHindi/Attention.h5"
+MODEL_PATH = "Attention.h5"
 # MODEL_PATH = "/workspaces/ImageCaptioningHindi/WithoutAttentionModel.h5"
 CAPTIONS_PATH = "/workspaces/ImageCaptioningHindi/hindi_captions.txt"
 TOKENIZER_PATH = "/workspaces/ImageCaptioningHindi/tokenizer.pkl"
