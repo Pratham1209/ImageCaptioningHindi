@@ -16,14 +16,13 @@ class CustomLSTM(LSTM):
         kwargs.pop("time_major", None)
         super().__init__(*args, **kwargs)
 
-
 # File paths
 MODEL_PATHS = {
-    "Without Attention": "WithoutAttentionModel.h5",
+    "Without Attention": "WithoutAttention.h5",
     "With Attention": "Attention.h5",
-    "MHA": "MHA.h5",
-    "BERT": "BERT.h5",
-    "Transformers": "Transformers.h5",
+    "MMulti-Head Attention (MHA)HA": "MHA.h5",
+    "BERT-based Captioning": "BERT.h5",
+    "Transformer-based Captioning": "Transformers.h5",
 }
 CAPTIONS_PATH = "hindi_captions.txt"
 
@@ -86,10 +85,79 @@ def generate_caption(model, tokenizer, features, max_length=47):
     # Remove any <start> or <end> tokens from the final caption
     return " ".join(word for word in result_caption if word not in ["<start>", "<end>"])
 
-
 # Streamlit UI
-st.title("Image Caption Generator in Hindi")
-st.write("Upload an image to generate a caption in Hindi and choose the prediction model.")
+st.set_page_config(page_title="Hindi Image Caption Generator", page_icon="📸")
+
+# Add CSS for better styling
+st.markdown(
+    """
+    <style>
+        .main-title {
+            font-size: 35px;
+            font-weight: bold;
+            color: #2E86C1;
+            text-align: center;
+        }
+        .sub-title {
+            font-size: 20px;
+            color: #566573;
+            text-align: center;
+        }
+        .footer {
+            font-size: 14px;
+            text-align: center;
+            color: #ABB2B9;
+            margin-top: 50px;
+        }
+        .button {
+            text-align: left;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Header
+st.markdown('<div class="main-title">Image Caption Generator in Hindi 📸</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title">Upload an image and select a model to generate captions in Hindi</div>', unsafe_allow_html=True)
+
+# Sidebar: About Section with Language Toggle
+with st.sidebar:
+    st.button("Developers", key="menu", help="Click to see options")
+    st.markdown("**Names:**\n1. Maitreyee Deshmukh\n2. Pratham Patharkar\n3. Mohit Lalwani\n4. Tanavi Gaikwad", unsafe_allow_html=True)
+    
+    st.markdown("---")
+    st.markdown("### About the Project")
+    # About section content
+    about_english = """
+    ### Why Hindi Captioning?
+    India is a diverse country where Hindi is the most spoken language, yet most AI solutions focus only on English, leaving millions excluded. Hindi captioning bridges this gap by:
+    
+    - **Promoting inclusivity** for non-English speakers.
+    - **Fostering accessibility** for visually impaired users with Hindi descriptions.
+    - **Representing culture** through technology in native languages.
+    
+    This ensures AI is for everyone, regardless of language barriers.
+    """
+    
+    about_hindi = """
+    ### हिंदी कैप्शनिंग क्यों?
+    भारत में हिंदी सबसे अधिक बोली जाने वाली भाषा है, लेकिन अधिकतर एआई समाधान केवल अंग्रेजी तक सीमित हैं। हिंदी कैप्शनिंग इस अंतर को कम करती है:
+    
+    - **सभी को शामिल करना** जो अंग्रेजी नहीं बोलते।
+    - **सुलभता बढ़ाना** दृष्टिहीन उपयोगकर्ताओं के लिए।
+    - **संस्कृति का प्रतिनिधित्व करना**।
+    
+    यह सुनिश्चित करता है कि एआई हर किसी के लिए हो।
+    """
+    
+    language = st.radio("Select Language | भाषा चुनें", ["English", "हिंदी"])
+    if language == "English":
+        st.markdown(about_english)
+    else:
+        st.markdown(about_hindi)
 
 # Dropdown for model selection
 selected_model = st.selectbox(
@@ -120,3 +188,6 @@ if uploaded_file is not None and selected_model:
         st.markdown(f"**{caption}**")
     except Exception as e:
         st.error(f"An error occurred: {e}")
+
+# Footer
+st.markdown('<div class="footer">Created with ❤️ by Team Enigma</div>', unsafe_allow_html=True)
