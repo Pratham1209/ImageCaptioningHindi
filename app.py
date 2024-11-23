@@ -18,11 +18,10 @@ class CustomLSTM(LSTM):
 
 # File paths
 MODEL_PATHS = {
-    "Without Attention": "WithoutAttention.h5",
+    "Without Attention": "WithoutAttentionModel.h5",
     "With Attention": "Attention.h5",
-    "MMulti-Head Attention (MHA)HA": "MHA.h5",
+    "Multi-Head Attention (MHA)": "MHA.h5",
     "BERT-based Captioning": "BERT.h5",
-    "Transformer-based Captioning": "Transformers.h5",
 }
 CAPTIONS_PATH = "hindi_captions.txt"
 
