@@ -70,9 +70,10 @@ The system architecture includes the following steps:
 ## **Models Implemented**
 1. **Without Attention**: Traditional image captioning model without attention mechanisms.
 2. **With Attention**: Uses attention mechanisms to focus on specific parts of an image while generating captions.
-3. **Multi-Head Attention (MHA)**: A more advanced version of attention, helping the model to learn multiple aspects of the image.
+3. **Transformer-based Captioning**: Uses Transformer architecture to generate more accurate captions. A more advanced version of attention, helping the model to 
+   learn multiple aspects of the image.
 4. **BERT-based Captioning**: Utilizes BERT for contextual understanding and generates captions in Hindi.
-5. **Transformer-based Captioning**: Uses Transformer architecture to generate more accurate captions.
+
 
 ---
 ## **Usage**
