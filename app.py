@@ -9,7 +9,7 @@ from tensorflow.keras.preprocessing.image import img_to_array
 from PIL import Image
 from tensorflow.keras.layers import LSTM
 
-# Define a custom LSTM to ignore unsupported arguments
+
 class CustomLSTM(LSTM):
     def __init__(self, *args, **kwargs):
         # Safely remove "time_major" argument, if exists
@@ -52,7 +52,7 @@ tokenizer = initialize_tokenizer(captions_dict)
 # Extract features from an image using InceptionV3
 def extract_features(img):
     model = InceptionV3(weights="imagenet", include_top=False, pooling="avg")
-    img = img.resize((299, 299))  # Resize to match InceptionV3 input size
+    img = img.resize((299, 299))  
     img = img_to_array(img)
     img = np.expand_dims(img, axis=0)
     img = preprocess_input(img)
@@ -61,7 +61,7 @@ def extract_features(img):
 # Generate caption
 def generate_caption(model, tokenizer, features, max_length=47):
     caption = "<start>"
-    consecutive_end_count = 0  # Track consecutive "end" tokens
+    consecutive_end_count = 0  # Track consecutive "end" token
     result_caption = []
 
     for _ in range(max_length):
@@ -81,13 +81,13 @@ def generate_caption(model, tokenizer, features, max_length=47):
         result_caption.append(predicted_word)
         caption += " " + predicted_word
 
-    # Remove any <start> or <end> tokens from the final caption
+    # Remove any <start> or <end> tokens from the final captio
     return " ".join(word for word in result_caption if word not in ["<start>", "<end>"])
 
 # Streamlit UI
 st.set_page_config(page_title="Hindi Image Caption Generator", page_icon="📸")
 
-# Add CSS for better styling
+# CSS
 st.markdown(
     """
     <style>
@@ -118,18 +118,18 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Header
+
 st.markdown('<div class="main-title">Image Caption Generator in Hindi 📸</div>', unsafe_allow_html=True)
 st.markdown('<div class="sub-title">Upload an image and select a model to generate captions in Hindi</div>', unsafe_allow_html=True)
 
-# Sidebar: About Section with Language Toggle
+
 with st.sidebar:
     st.button("Developers", key="menu", help="Click to see options")
     st.markdown("**Names:**\n1. Maitreyee Deshmukh\n2. Pratham Patharkar\n3. Mohit Lalwani\n4. Tanavi Gaikwad", unsafe_allow_html=True)
     
     st.markdown("---")
     st.markdown("### About the Project")
-    # About section content
+    
     about_english = """
     ### Why Hindi Captioning?
     India is a diverse country where Hindi is the most spoken language, yet most AI solutions focus only on English, leaving millions excluded. Hindi captioning bridges this gap by:
@@ -158,7 +158,7 @@ with st.sidebar:
     else:
         st.markdown(about_hindi)
 
-# Dropdown for model selection
+
 selected_model = st.selectbox(
     "Select a model for caption generation:",
     options=list(MODEL_PATHS.keys())
