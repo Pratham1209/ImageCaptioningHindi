@@ -125,7 +125,7 @@ st.markdown('<div class="sub-title">Upload an image and select a model to genera
 
 with st.sidebar:
     st.button("Developers", key="menu", help="Click to see options")
-    st.markdown("**Names:**\n1. Maitreyee Deshmukh\n2. Pratham Patharkar\n3. Mohit Lalwani\n4. Tanavi Gaikwad", unsafe_allow_html=True)
+    st.markdown("**Names:**\n1.Pratham Patharkar \n2. Maitreyee Deshmukh", unsafe_allow_html=True)
     
     st.markdown("---")
     st.markdown("### About the Project")
